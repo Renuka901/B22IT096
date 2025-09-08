@@ -29,6 +29,10 @@ export default function App() {
     return result;
   };
 
+  const getCreationDate = () => {
+    return new Date().toLocaleDateString();
+  };
+
   const addUrl = () => {
     if (urls.length < 5) {
       setUrls([...urls, { long: '', short: '', expiry: '' }]);
@@ -56,8 +60,9 @@ export default function App() {
     const promises = validUrls.map(async (url, index) => {
       const shortCode = generateShortCode();
       const shortened = `${window.location.origin}/${shortCode}`;
+      const creation = getCreationDate();
       const expiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString();
-      return { ...url, short: shortened, expiry };
+      return { ...url, short: shortened, creation, expiry };
     });
     const results = await Promise.all(promises);
     setUrls(results.concat(urls.slice(validUrls.length)));
@@ -85,6 +90,7 @@ export default function App() {
               {url.short && (
                 <div style={{ marginTop: '5px' }}>
                   <p>Shortened: <a href={url.short} target="_blank" rel="noopener noreferrer">{url.short}</a></p>
+                  <p>Created on: {url.creation}</p>
                   <p>Expires on: {url.expiry}</p>
                 </div>
               )}
